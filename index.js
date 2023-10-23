@@ -79,15 +79,15 @@ function findEmployeeByFirstName(srcArray, firstName){
     return srcArray.filter(e => {return e.firstName === firstName})[0]
 }
 
-function calculatePayroll(arr){
+function calculatePayroll(array){
     
     //explanation: for all empObjs within the passed arr, map and 
     //reduce the wages owed for all into the totalPayroll accumulator
 
     let totalPayroll = 0;
     
-    arr.map(empObj => {
-        totalPayroll += allWagesFor(empObj)
+    array.map(empObj => {
+        totalPayroll += allWagesFor.call(empObj)
     })
 
     return totalPayroll
