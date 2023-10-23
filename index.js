@@ -21,3 +21,89 @@ const allWagesFor = function () {
     return payable
 }
 
+function createEmployeeRecord([firstName, familyName, title, payPerHour]){
+    return {
+        "firstName": firstName,
+        "familyName": familyName,
+        "title": title,
+        "payPerHour": payPerHour,
+        "timeInEvents": [],
+        "timeOutEvents": []
+    }
+}
+
+function createEmployeeRecords(arrays){
+    let employeeRecords = [];
+    arrays.map((arr) => {employeeRecords.push(createEmployeeRecord(arr))})
+    return employeeRecords
+}
+
+
+function createTimeInEvent(dateStamp){
+    let timeObject = {
+        type: "TimeIn",
+        hour: parseInt(dateStamp.split(" ")[1]),
+        date: dateStamp.split(" ")[0]
+    }
+    this.timeInEvents.push(timeObject)
+    return this
+}
+
+
+function createTimeOutEvent(dateStamp){
+    let timeObject = {
+        type: "TimeOut",
+        hour: parseInt(dateStamp.split(" ")[1]),
+        date: dateStamp.split(" ")[0]
+    }
+
+    this.timeOutEvents.push(timeObject)
+    return this
+}
+
+
+function hoursWorkedOnDate(date){ 
+    const timeIn = this.timeInEvents.filter(timeInStamp => timeInStamp.date === date)
+    const timeOut = this.timeOutEvents.filter(timeOutStamp => timeOutStamp.date === date)
+    return (timeOut[0].hour - timeIn[0].hour) / 100
+}
+
+function wagesEarnedOnDate(date){
+    // console.log("THIS FROM wagesEarnedOnDate: ", this)
+    //NOTE: Since we are calling hoursWorkedOnDate, we must use .call to pass this to the function
+    return hoursWorkedOnDate.call(this, date) * this.payPerHour
+}
+
+function findEmployeeByFirstName(srcArray, firstName){
+    // console.log(srcArray)
+    return srcArray.filter(e => {return e.firstName === firstName})[0]
+}
+
+function calculatePayroll(arr){
+    
+    //explanation: for all empObjs within the passed arr, map and 
+    //reduce the wages owed for all into the totalPayroll accumulator
+
+    let totalPayroll = 0;
+    
+    arr.map(empObj => {
+        totalPayroll += allWagesFor(empObj)
+    })
+
+    return totalPayroll
+}
+
+let emp = {
+    firstName: 'Bart',
+    familyName: 'Simpson',
+    title: 'Scamp',
+    payPerHour: 100,
+    timeInEvents: [ { type: 'TimeIn', hour: 1300, date: '2018-01-01' } ],
+    timeOutEvents: [ { type: 'TimeOut', hour: 2300, date: '2018-01-01' } ]
+  }
+  
+//Since the date and hour are one string, we can use call rather than array
+// console.log("TIME IN: ", createTimeInEvent.call(emp, "2018-01-01 1300")) //pass
+// console.log("TIME OUT: ", createTimeOutEvent.call(emp, "2018-01-01 2300")) //pass
+// console.log("HOURS WORKED ON DATE: ", hoursWorkedOnDate.call(emp, '2018-01-01'))
+// console.log("WAGES EARNED ON DATE: ", wagesEarnedOnDate.call(emp, '2018-01-01'))
